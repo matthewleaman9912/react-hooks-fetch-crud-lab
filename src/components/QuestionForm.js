@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import QuestionItem from "./QuestionItem";
 
-function QuestionForm(props) {
+
+function QuestionForm({newQuestions, setNewQuestions, mapIt, quizQuestions, setQuizQuestions, isTrue, setIsTrue}) {
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -10,6 +12,14 @@ function QuestionForm(props) {
     correctIndex: 0,
   });
 
+  
+ 
+  const questionData = {
+    "prompt": formData.prompt,
+    "answers": [formData.answer1, formData.answer2, formData.answer3, formData.answer4],
+    "correctIndex": formData.correctIndex
+  }
+
   function handleChange(event) {
     setFormData({
       ...formData,
@@ -17,10 +27,26 @@ function QuestionForm(props) {
     });
   }
 
+  
   function handleSubmit(event) {
     event.preventDefault();
     console.log(formData);
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: { "Content-Type" : "application/json"},
+      body: JSON.stringify(questionData)
+    })
+    .then((response) => response.json())
+    .then((data) => {
+    setNewQuestions(...quizQuestions, data);
+    
+    })
+    setIsTrue((isTrue) => !isTrue)
+    
   }
+
+  
+
 
   return (
     <section>
